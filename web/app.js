@@ -15,7 +15,7 @@ function loadApi(key) {
   apiReady = new Promise((resolve, reject) => {
     const script = document.createElement("script");
     const timeout = setTimeout(() => reject(new Error("Загрузка API заняла слишком много времени. Перезагрузите страницу.")), 20000);
-    script.src = "https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=" + encodeURIComponent(key);
+    script.src = "https://api-maps.yandex.ru/2.1/?lang=ru_RU&load=package.full&apikey=" + encodeURIComponent(key);
     script.onload = () => {
       if (!window.ymaps) { clearTimeout(timeout); reject(new Error("API не загрузился. Проверьте ключ и доступ.")); return; }
       window.ymaps.ready(() => { clearTimeout(timeout); resolve(); });
