@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Дорога домой · проверка Яндекс Карт</title>
+<style>
+  *{box-sizing:border-box}body{margin:0;background:#f4f5f7;color:#182530;font:16px/1.5 system-ui,sans-serif}
+  main{max-width:1100px;margin:auto;padding:24px}h1{margin:0;font-size:28px}p{margin:8px 0 20px;color:#51616e}
+  section{background:white;border:1px solid #d9e0e5;border-radius:12px;padding:20px;margin:16px 0}
+  form{display:grid;grid-template-columns:1fr 1fr;gap:16px}label{display:grid;gap:6px;font-weight:600}
+  input,button{font:inherit;border:1px solid #9aa9b4;border-radius:6px;padding:10px}button{cursor:pointer;background:#ffe566;color:#182530}
+  button:disabled{opacity:.5;cursor:wait}.wide{grid-column:1/-1}.actions{display:flex;gap:12px;flex-wrap:wrap}
+  #map{height:560px;background:#e9edf1;border-radius:0}#status{min-height:26px;font-weight:600}
+  table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd}
+  a{color:#125bb3}.small{font-size:14px}input:focus-visible,button:focus-visible{outline:3px solid #468bc4}
+  @media(max-width:600px){main{padding:12px}form{grid-template-columns:1fr}#map{height:480px}section{padding:12px}}
+</style>
+<main>
+  <h1>Дорога домой</h1>
+  <p>Минимальная проверка маршрутов через официальный JavaScript API Яндекса.</p>
+  <section>
+    <form id="route-form" autocomplete="off">
+      <label class="wide">Ключ JavaScript API 2.1
+        <input id="api-key" type="password" autocomplete="off" required placeholder="Введите ключ для этого сайта">
+      </label>
+      <label>Откуда: широта, долгота
+        <input id="origin" required placeholder="Ваши координаты начала" aria-describedby="privacy">
+      </label>
+      <label>Куда: широта, долгота
+        <input id="destination" required placeholder="Ваши координаты назначения" aria-describedby="privacy">
+      </label>
+      <div class="wide actions">
+        <button id="build" type="submit">Показать маршрут с пробками</button>
+        <button id="swap" type="button">Поменять точки</button>
+        <button id="copy-link" type="button">Скопировать ссылку на маршрут</button>
+      </div>
+    </form>
+    <p class="small" id="privacy">Координаты передаются Яндексу после нажатия кнопки. Страница не сохраняет ключ и результаты. Ссылка содержит только введённые вами точки, без дорожных данных.</p>
+  </section>
+  <section>
+    <div id="status" role="status" aria-live="polite">Реальная проверка ещё не выполнена: необходим ваш ключ.</div>
+    <div id="routes"></div>
+  </section>
+  <div id="map" aria-label="Карта маршрутов Яндекса"></div>
+  <section class="small">
+    <p>Выберите вариант на карте. Время с пробками — оценка Яндекса, а не гарантия прибытия. Отсутствующее значение обозначается «нет данных».</p>
+    <p>Копирование сводки с данными API в ChatGPT и фоновый сбор не включены: право такого использования не подтверждено. Главный затор, скорости и начало свободного движения здесь не рассчитываются.</p>
+    <a href="https://yandex.ru/legal/maps_api/ru/" target="_blank" rel="noopener">Условия использования API</a> ·
+    <a href="https://yandex.ru/legal/maps_termsofuse/" target="_blank" rel="noopener">Условия Яндекс Карт</a>
+  </section>
+</main>
+<script src="app.js" defer></script>
+</html>
