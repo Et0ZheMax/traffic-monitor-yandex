@@ -31,7 +31,13 @@ function routeFailureMessage(event) {
   if (/key|referer|forbidden|403|invalid/i.test(message)) {
     return "Яндекс отклонил ключ или домен сайта. Если настройки только сохранены, подождите до 15 минут и перезагрузите страницу перед повторной проверкой.";
   }
-  return "Маршрут не получен. Проверьте доступ к маршрутизации, активацию ключа и ограничения домена. Новые настройки могут применяться до 15 минут.";
+  const safeMessage = message
+    .replace(/https?:\/\/\S+/gi, "[URL скрыт]")
+    .replace(/[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}/gi, "[идентификатор скрыт]")
+    .replace(/(?:api[-_]?key|token|secret)\s*[:=]\s*[^\s&,;]+/gi, "[секрет скрыт]")
+    .replace(/[\r\n]+/g, " ").slice(0, 240);
+  return "Маршрут не получен. Проверьте доступ к маршрутизации, активацию ключа и ограничения домена." +
+    (safeMessage ? " Ошибка маршрутизатора: " + safeMessage : "");
 }
 function renderRoutes(routeObject) {
   if (routeObject !== multiRoute) return;
