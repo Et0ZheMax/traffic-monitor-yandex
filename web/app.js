@@ -25,6 +25,14 @@ function loadApi(key) {
   });
   return apiReady;
 }
+function routeFailureMessage(event) {
+  // Never render the raw provider error: it can contain request URLs or keys.
+  const message = String(event.get("error")?.message ?? "");
+  if (/key|referer|forbidden|403|invalid/i.test(message)) {
+    return "Яндекс отклонил ключ или домен сайта. Если настройки только сохранены, подождите до 15 минут и перезагрузите страницу перед повторной проверкой.";
+  }
+  return "Маршрут не получен. Проверьте доступ к маршрутизации, активацию ключа и ограничения домена. Новые настройки могут применяться до 15 минут.";
+}
 function renderRoutes(routeObject) {
   if (routeObject !== multiRoute) return;
   byId("routes").replaceChildren();
@@ -60,7 +68,10 @@ byId("route-form").addEventListener("submit", async (event) => {
     await loadApi(key);
     byId("api-key").value = ""; byId("api-key").required = false;
     if (!map) map = new ymaps.Map("map", {center: origin, zoom: 11, controls: ["zoomControl", "trafficControl"]});
-    if (multiRoute) map.geoObjects.remove(multiRoute);
+    if (multiRoute) {
+      map.geoObjects.remove(multiRoute);
+      multiRoute.model.destroy();
+    }
     const current = new ymaps.multiRouter.MultiRoute({
       referencePoints: [origin, destination], params: {routingMode:"auto", avoidTrafficJams:true}
     }, {boundsAutoApply:true});
@@ -69,10 +80,10 @@ byId("route-form").addEventListener("submit", async (event) => {
       if (current !== multiRoute) return;
       measuredAt = Date.now(); renderRoutes(current); byId("build").disabled = false;
     });
-    current.model.events.add("requestfail", () => {
+    current.model.events.add("requestfail", (event) => {
       if (current !== multiRoute) return;
       measuredAt = null; byId("routes").replaceChildren();
-      byId("status").textContent = "Маршрут не получен. Проверьте доступ к маршрутизации, ключ и ограничения домена.";
+      byId("status").textContent = routeFailureMessage(event);
       byId("build").disabled = false;
     });
     map.geoObjects.add(current);
